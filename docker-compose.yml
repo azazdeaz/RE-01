@@ -1,0 +1,5 @@
+version: '3.1'
+services:
+  onboard:
+    image: node:8
+    command: npm i && npx ts-node launchers/test.ts
