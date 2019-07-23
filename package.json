@@ -2,10 +2,14 @@
   "name": "root",
   "private": true,
   "devDependencies": {
+    "@types/rpio": "0.0.2",
     "lerna": "^3.15.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "rpio": "^1.0.13"
+    "@types/zeromq": "^4.6.2",
+    "rpio": "^1.0.13",
+    "ts-node": "^8.3.0",
+    "zeromq": "^5.1.0"
   }
 }
