@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@types/zeromq": "^4.6.2",
+    "delay": "^4.3.0",
     "rpio": "^1.0.13",
     "ts-node": "^8.3.0",
     "zeromq": "^5.1.0"
