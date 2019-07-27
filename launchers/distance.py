@@ -11,5 +11,5 @@ sensor = DistanceSensor(echo=20, trigger=21, max_distance=10)
 while True:
     print('Value: ', sensor.value)
     print('Distance: ', sensor.distance, ' / ', sensor.max_distance)
-    socket.send(('obstacle %d' % sensor.distance).encode('ascii'))
+    socket.send(('obstacle %f' % sensor.distance).encode('ascii'))
     sleep(0.1)

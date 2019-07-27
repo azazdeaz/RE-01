@@ -6,16 +6,22 @@ const sockReq = zmq.socket('req')
 sockReq.connect('tcp://192.168.0.103:5556')
 console.log('listening...')
 
+const send = (msg: string) => {
+    console.log(msg)
+    sockReq.send(msg)
+}
+
 sockSub.on('message', function(message) {
-    console.log('received a message related to:', message.toString(), 'containing message:', message);
+    console.log('received a message:', message.toString());
     const [topic, value] = message.toString().split(' ')
     if (topic === 'obstacle') {
         const distance = parseFloat(value)
-        if (distance > 0.12) {
-            sockReq.send('motor speed 0.5 0.5')
+        let left = 0.6
+        let right = 0.6
+        if (distance < 0.4) {
+            // slow down the right wheel as the obstacle getting closer
+            right *= Math.max(0, distance - 0.3) * 10
         }
-        else {
-            sockReq.send('motor speed 0 0')
-        }
+        send(`motor speed ${left} ${right}`)
     }
 });
