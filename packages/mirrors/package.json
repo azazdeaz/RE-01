@@ -1,0 +1,30 @@
+{
+  "name": "mirrors",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "András Polgár <azazdeaz@gmail.com>",
+  "homepage": "https://github.com/azazdeaz/RE-01#readme",
+  "license": "ISC",
+  "main": "main.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azazdeaz/RE-01.git"
+  },
+  "scripts": {
+    "start": "electron main.ts",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/azazdeaz/RE-01/issues"
+  },
+  "devDependencies": {
+    "electron": "5.0.8"
+  }
+}
