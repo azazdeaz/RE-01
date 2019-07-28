@@ -1,4 +1,13 @@
 const { app, BrowserWindow } = require('electron')
+const zmq  = require('zeromq')
+const sockSub = zmq.socket('sub')
+sockSub.connect('tcp://localhost:5563')
+sockSub.subscribe('')
+
+sockSub.on('message', (message) => {
+  message = message.toString()
+  console.log('received a message:', message)
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
