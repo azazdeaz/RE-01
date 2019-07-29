@@ -1,5 +1,5 @@
-import React from 'react';
-import './App.css';
+import React from 'react'
+import { TestChart } from './TestChart'
 
 import { Button, Intent, Spinner } from "@blueprintjs/core";
 
@@ -10,6 +10,7 @@ const App: React.FC = () => {
       <header className="App-header">
         <Spinner intent={Intent.PRIMARY} />
         <Button text='hihihi' minimal />
+        <TestChart />
       </header>
     </div>
   );
