@@ -5,7 +5,7 @@
   "author": "András Polgár <azazdeaz@gmail.com>",
   "homepage": "https://github.com/azazdeaz/RE-01#readme",
   "license": "ISC",
-  "main": "main.ts",
+  "main": "src/main.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -18,7 +18,9 @@
     "url": "git+https://github.com/azazdeaz/RE-01.git"
   },
   "scripts": {
-    "start": "electron main.ts",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "nodemon --watch ./lib/**/*.js --exec 'electron ./lib/main.js'",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {
@@ -26,7 +28,8 @@
   },
   "devDependencies": {
     "electron": "5.0.8",
-    "electron-rebuild": "^1.8.5"
+    "electron-rebuild": "^1.8.5",
+    "nodemon": "^1.19.1"
   },
   "dependencies": {
     "zeromq": "^5.1.0"

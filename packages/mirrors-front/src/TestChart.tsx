@@ -4,6 +4,14 @@ import { timeFormat } from 'd3-time-format'
 import { last, range } from 'lodash'
 import React, { FC, useEffect, useState } from 'react'
 
+
+// @ts-ignore
+const { ipcRenderer } = window.require('electron')
+
+ipcRenderer.on('zmq', (event: any, ...args: any[]) => {
+  console.log(event, args)
+})
+
 const date = new Date()
 
 date.setMinutes(0)
@@ -59,14 +67,14 @@ export const TestChart: FC = () => {
         y: 30 + Math.round(Math.random() * 20),
       })
       dc.push({
-        x: time.timeMinute.offset(glx(dc), 30)
+        x: time.timeMinute.offset(glx(dc), 30),
         y: 60 + Math.round(Math.random() * 20),
       })
 
       setData({ dataA: da, dataB: db, dataC: dc })
 
       return () => clearInterval(id)
-    }, 100)
+    }, 3000)
   }, [])
   return (
     <Line
