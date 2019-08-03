@@ -1,38 +1,109 @@
-import * as d3 from 'd3'
-import * as Plottable from 'plottable'
-import React, { FC, useCallback } from 'react'
+import { Line } from '@nivo/line'
+import * as time from 'd3-time'
+import { timeFormat } from 'd3-time-format'
+import { last, range } from 'lodash'
+import React, { FC, useEffect, useState } from 'react'
 
-type Data = {
-  x: number
-  y: number
+const date = new Date()
+
+date.setMinutes(0)
+date.setSeconds(0)
+date.setMilliseconds(0)
+
+const commonProperties = {
+  animate: true,
+  enableSlices: 'x',
+  height: 400,
+  margin: { top: 20, right: 20, bottom: 60, left: 80 },
+  width: 900,
 }
 
-function makeBasicChart(el: HTMLElement) {
-  const xScale = new Plottable.Scales.Linear()
-  const yScale = new Plottable.Scales.Linear()
+const getInitData = () => ({
+  dataA: range(100).map(i => ({
+    x: time.timeMinute.offset(date, i * 30),
+    y: 10 + Math.round(Math.random() * 20),
+  })),
+  dataB: range(100).map(i => ({
+    x: time.timeMinute.offset(date, i * 30),
+    y: 30 + Math.round(Math.random() * 20),
+  })),
+  dataC: range(100).map(i => ({
+    x: time.timeMinute.offset(date, i * 30),
+    y: 60 + Math.round(Math.random() * 20),
+  })),
+})
 
-  const xAxis = new Plottable.Axes.Numeric(xScale, 'bottom')
-  const yAxis = new Plottable.Axes.Numeric(yScale, 'left')
+const formatTime = timeFormat('%Y %b %d')
 
-  const plot = new Plottable.Plots.Line<Data>()
-  // @ts-ignore
-  plot.x(d => d.x, xScale)
-  plot.y(d => d.y, yScale)
-
-  const data: Data[] = [{ x: 0, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 4 }, { x: 3, y: 8 }]
-
-  const dataset = new Plottable.Dataset(data)
-  plot.addDataset(dataset)
-
-  const chart = new Plottable.Components.Table([[yAxis, plot], [null, xAxis]])
-
-  chart.renderTo(d3.select(el))
-  setTimeout(() => chart.redraw(), 1000)
+const glx = (data: Array<{ x: Date }>) => {
+  const l = last(data)
+  return l ? l.x : new Date()
 }
+
+
 
 export const TestChart: FC = () => {
-  const ref = useCallback(node => {
-    makeBasicChart(node)
+  const [{ dataA, dataB, dataC }, setData] = useState(getInitData())
+  useEffect(() => {
+    const initData = getInitData()
+    const da = [...initData.dataA]
+    const db = [...initData.dataB]
+    const dc = [...initData.dataC]
+    const id = setInterval(() => {
+      da.push({
+        x: time.timeMinute.offset(glx(da), 30),
+        y: 10 + Math.round(Math.random() * 20),
+      })
+      db.push({
+        x: time.timeMinute.offset(glx(db), 30),
+        y: 30 + Math.round(Math.random() * 20),
+      })
+      dc.push({
+        x: time.timeMinute.offset(glx(dc), 30)
+        y: 60 + Math.round(Math.random() * 20),
+      })
+
+      setData({ dataA: da, dataB: db, dataC: dc })
+
+      return () => clearInterval(id)
+    }, 100)
   }, [])
-  return <div ref={ref} style={{ width: 400, height: 300 }}/>
+  return (
+    <Line
+      {...commonProperties}
+      margin={{ top: 30, right: 50, bottom: 60, left: 50 }}
+      data={[
+        { id: 'A', data: dataA },
+        { id: 'B', data: dataB },
+        { id: 'C', data: dataC },
+      ]}
+      xScale={{ type: 'time', format: 'native' }}
+      yScale={{ type: 'linear', max: 100 }}
+      axisTop={{
+        format: '%H:%M',
+        tickValues: 'every 4 hours',
+      }}
+      axisBottom={{
+        format: '%H:%M',
+        legend: `${formatTime(dataA[0].x)} ——— ${formatTime(glx(dataA))}`,
+        legendOffset: 46,
+        legendPosition: 'middle',
+        tickValues: 'every 4 hours',
+      }}
+      axisRight={{}}
+      enablePoints={false}
+      enableGridX={true}
+      curve="monotoneX"
+      animate={false}
+      motionStiffness={120}
+      motionDamping={50}
+      isInteractive={false}
+      enableSlices={false}
+      useMesh={true}
+      theme={{
+        axis: { ticks: { text: { fontSize: 14 } } },
+        grid: { line: { stroke: '#ddd', strokeDasharray: '1 2' } },
+      }}
+    />
+  )
 }
