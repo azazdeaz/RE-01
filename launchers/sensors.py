@@ -14,5 +14,5 @@ def publish(topic, data):
     message = "{} {}".format(topic, json.dumps(data, separators=(',', ':')))
     socket.send(message.encode("ascii"))
 
-threading.Thread(target=distance.run, args=(publish,)).start()
+# threading.Thread(target=distance.run, args=(publish,)).start()
 threading.Thread(target=mpu.run, args=(publish, mpu.calibrate())).start()
