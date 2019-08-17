@@ -5,7 +5,7 @@ import time
 import json
 from gpiozero import LED, Robot
 
-robot = Robot(left=(19, 13), right=(18, 12))
+robot = Robot(left=(18, 12), right=(19, 13))
 led = LED(26)
 
 port = "5556"
