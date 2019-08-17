@@ -9,6 +9,10 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.3"
   },
+  "scripts": {
+    "start": "npx lerna run start --stream",
+    "watch": "npx lerna run watch --stream"
+  },
   "dependencies": {
     "@types/zeromq": "^4.6.2",
     "delay": "^4.3.0",

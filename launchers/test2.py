@@ -6,7 +6,7 @@ import time
 port = "5556"
 context = zmq.Context()
 socket = context.socket(zmq.PAIR)
-socket.connect("tcp://192.168.0.103:%s" % port)
+socket.connect("tcp://192.168.0.101:%s" % port)
 
 while True:
     msg = socket.recv()

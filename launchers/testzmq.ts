@@ -2,7 +2,7 @@ import zmq from 'zeromq'
 const sock = zmq.socket('req');
 import delay from 'delay'
 
-sock.connect('tcp://192.168.0.103:5556');
+sock.connect('tcp://192.168.0.101:5556');
 // sock.subscribe('kitty cats');
 console.log('Subscriber connected to port 5556');
 

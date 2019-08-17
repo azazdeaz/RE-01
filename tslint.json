@@ -4,6 +4,7 @@
     "tslint-config-prettier"
   ],
   "rules": {
-    "no-submodule-imports": [true, "rxjs"]
+    "no-submodule-imports": [true, "rxjs"],
+    "object-literal-sort-keys": false
   }
 }
