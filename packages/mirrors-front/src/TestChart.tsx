@@ -136,7 +136,12 @@ const renderData = (
   )
 }
 
-const XYZChart: FC<{ source: Observable<IXYZTData> }> = ({ source }) => {
+type Props = {
+  source: Observable<IXYZTData>
+  title: string
+}
+
+const XYZChart: FC<Props> = ({ source, title }) => {
   const [chart, setChart] = useState<Chart | null>(null)
   useEffect(() => {
     const subscription = source.subscribe({
@@ -180,6 +185,12 @@ const XYZChart: FC<{ source: Observable<IXYZTData> }> = ({ source }) => {
         new Chart(node.getContext('2d'), {
           type: 'line',
           options: {
+            title: {
+              display: true,
+              text: title,
+            },
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
               xAxes: [
                 {
@@ -197,7 +208,7 @@ const XYZChart: FC<{ source: Observable<IXYZTData> }> = ({ source }) => {
   }, [])
 
   return (
-    <div style={{ width: '100%', height: 400 }}>
+    <div style={{ width: '100%', height: 300, position: 'relative' }}>
       <canvas ref={canvasRef} />
     </div>
   )
@@ -227,8 +238,8 @@ export const TestChart: FC = () => {
 
   return (
     <>
-      <XYZChart source={observables[0]} />
-      <XYZChart source={observables[1]} />
+      <XYZChart source={observables[0]} title="accelerometer" />
+      <XYZChart source={observables[1]} title="gyroscope" />
     </>
   )
 }

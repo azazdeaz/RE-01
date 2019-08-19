@@ -14,8 +14,10 @@ const send = (msg: string) => {
 }
 
 const { react, sense } = (() => {
-  const AUTO_MAX_SPEED = 0.6
+  const AUTO_MAX_SPEED = 0.8
   let stuckSince: null | number = null
+  let unstuckUntil: null | number = null
+
   let obstacleDangerLevel = 0
 
   const sense = (topic: string, data: any) => {
@@ -23,14 +25,15 @@ const { react, sense } = (() => {
       const { distance } = data
       obstacleDangerLevel = Math.min(1, Math.max(0, distance * -100 + 4))
     } else if (topic === 'mpu') {
-      const { ax, ay, az } = data
-      console.log({ ax, ay, az } )
-      if (Math.abs(ax) < 0.2 && Math.abs(ay) < 0.2 && Math.abs(az) < 0.2) {
+      const { gx, gy, gz } = data
+      console.log({ gx, gy, gz })
+      if (Math.abs(gx) < 8 && Math.abs(gy) < 8 && Math.abs(gz) < 8) {
         if (!stuckSince) {
           stuckSince = Date.now()
+        } else if (Date.now() - stuckSince > 3 * SEC) {
+          unstuckUntil = Date.now() + 5 * SEC
         }
-      }
-      else {
+      } else {
         stuckSince = null
       }
     }
@@ -39,20 +42,23 @@ const { react, sense } = (() => {
   const react = () => {
     let speedLeft = 0
     let speedRight = 0
-    console.log('>>>', stuckSince && Date.now() - stuckSince,  3 * SEC)
-    if (stuckSince && Date.now() - stuckSince > 3 * SEC) {
+    console.log('>>>', stuckSince && Date.now() - stuckSince, 3 * SEC)
+    if (unstuckUntil && unstuckUntil > Date.now()) {
       speedLeft = -AUTO_MAX_SPEED
       speedRight = -AUTO_MAX_SPEED
-    }
-    else if (obstacleDangerLevel > 0) {
+    } else if (obstacleDangerLevel > 0) {
       speedLeft = AUTO_MAX_SPEED * -obstacleDangerLevel
       speedRight = AUTO_MAX_SPEED
-    }
-    else {
+    } else {
       speedLeft = AUTO_MAX_SPEED
       speedRight = AUTO_MAX_SPEED
     }
-    send(`motor speed ${speedLeft} ${speedRight}`)
+    send(JSON.stringify({
+      command: 'speed',
+      domain: 'motor',
+      left: speedLeft,
+      right: speedRight
+    }))
   }
 
   return { sense, react }

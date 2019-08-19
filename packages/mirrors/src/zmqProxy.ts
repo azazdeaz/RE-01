@@ -8,6 +8,11 @@ sockSub.subscribe('')
 const sockReq = zmq.socket('req')
 sockReq.connect('tcp://192.168.0.101:5556')
 
+const cameraSub = zmq.socket('sub')
+cameraSub.connect('tcp://192.168.0.101:5560')
+// cameraSub.setsockopt(zmq.ZMQ_CONFLATE, 1)
+cameraSub.subscribe('')
+
 ipcMain.on('asynchronous-message', (_, arg: any) => {
   console.log('main sending', arg)
   if (arg.domain && arg.command) {
@@ -24,13 +29,16 @@ export const startProxy = (contents: Electron.WebContents) => {
   //       gz: (Math.random() - 0.5) * 2,
   //       ax: (Math.random() - 0.5) * 2,
   //       ay: (Math.random() - 0.5) * 2,
-  //       az: (Math.random() - 0.5) * 2,
+  //       az: (Math.random() - 0.5) * 2
   //     },
   //     type: 'mpu',
   //   }
   //   // console.log(message)
   //   contents.send('zmq', message)
   // }, 100)
+  cameraSub.on('message', (message) => {
+    contents.send('zmq-camera', message)
+  })
 
   sockSub.on('message', message => {
     try {
