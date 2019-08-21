@@ -4,7 +4,7 @@ ioHook.start(false)
 import zmq from 'zeromq'
 const sock = zmq.socket('req');
 
-sock.connect('tcp://192.168.0.101:5556');
+sock.connect('tcp://192.168.0.100:5556');
 
 enum KeyCodes {
     UP = '57416',

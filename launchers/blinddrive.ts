@@ -1,9 +1,9 @@
 import zmq from 'zeromq'
 const sockSub = zmq.socket('sub')
-sockSub.connect('tcp://192.168.0.101:5557')
+sockSub.connect('tcp://192.168.0.100:5557')
 sockSub.subscribe('')
 const sockReq = zmq.socket('req')
-sockReq.connect('tcp://192.168.0.101:5556')
+sockReq.connect('tcp://192.168.0.100:5556')
 console.log('listening...')
 
 const SEC = 1000

@@ -10,5 +10,9 @@ RUN cmake .
 RUN make
 WORKDIR /apriltags3-py
 
+RUN apt update -y
+RUN apt install net-tools -y
+
 RUN pip install pyzmq
 
+EXPOSE 5600

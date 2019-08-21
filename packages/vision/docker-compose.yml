@@ -1,6 +1,10 @@
 version: "3.7"
 services:
-  vison:
+  vision:
     build: .
+#    command: python3 /apriltags3-py/vision.py
+    command: tail -F anything
     volumes:
       - ./vision.py:/apriltags3-py/vision.py
+    ports:
+      - "5600:5600"
