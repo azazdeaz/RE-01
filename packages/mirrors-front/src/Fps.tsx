@@ -1,4 +1,5 @@
 import React, {
+  CSSProperties,
   FC,
   forwardRef,
   useImperativeHandle,
@@ -13,7 +14,11 @@ const style = {
   width: 80,
 }
 
-const FpsComponent: FC = (_, parentRef) => {
+interface IProps {
+  style?: CSSProperties
+}
+
+const FpsComponent: FC<IProps> = (props, parentRef) => {
   const [fps, setFps] = useState(0)
   const ref = useRef({ ticks: [] as number[] })
   useImperativeHandle(
@@ -40,7 +45,7 @@ const FpsComponent: FC = (_, parentRef) => {
     []
   )
   return (
-    <div style={style}>
+    <div style={{...style, ...props.style}}>
       <pre>fps: {fps}</pre>
     </div>
   )

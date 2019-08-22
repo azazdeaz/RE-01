@@ -8,37 +8,44 @@ function binaryToDataURL(inputArray: Uint8Array) {
   return URL.createObjectURL(blob)
 }
 
+const styleTopLeft = {
+  position: 'absolute' as 'absolute',
+  top: 0,
+  left: 0
+}
+
 function writeToContextWithURL(
   ctx: CanvasRenderingContext2D,
   inputArray: Uint8Array
 ) {
   const img = new Image()
   img.onload = () => {
-    console.time('draw image')
     ctx.drawImage(img, 0, 0)
-    console.timeEnd('draw image')
   }
   img.onerror = e => {
     console.log('Error during loading image:', e)
   }
-  console.time('convert to url')
   img.src = binaryToDataURL(inputArray)
-  console.timeEnd('convert to url')
 }
 
 export const Monitor: FC = () => {
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
+  const [cvImage, setCvImage] = useState<HTMLCanvasElement | null>(null)
+  const [cvApril, setCvApril] = useState<HTMLCanvasElement | null>(null)
   const fpsFef = useRef(null)
-  const ref = useCallback((node: HTMLCanvasElement | null) => {
-    console.log({ node })
+  const refImage = useCallback((node: HTMLCanvasElement | null) => {
     if (node !== null) {
-      setCanvas(node)
+      setCvImage(node)
+    }
+  }, [])
+  const refApril = useCallback((node: HTMLCanvasElement | null) => {
+    if (node !== null) {
+      setCvApril(node)
     }
   }, [])
   useEffect(() => {
     ipcRenderer.on('zmq-camera', (_: any, event: Uint8Array) => {
-      if (canvas) {
-        const ctx = canvas.getContext('2d')
+      if (cvImage) {
+        const ctx = cvImage.getContext('2d')
         if (ctx) {
           writeToContextWithURL(ctx, event)
           // putImageBitmapData(ctx, event)
@@ -48,11 +55,32 @@ export const Monitor: FC = () => {
         }
       }
     })
-  }, [canvas])
+  }, [cvImage])
+
+  useEffect(() => {
+    ipcRenderer.on('zmq', (_: any, event: any) => {
+      if (event.type === 'apriltags' && cvImage) {
+        const ctx = cvImage.getContext('2d')
+        if (ctx) {
+          for (const detection of event.data)  {
+            console.log(_, event)
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ff11'
+            ctx.moveTo(detection.corners[3][0], detection.corners[3][1])
+            for (const corner of detection.corners) {
+              ctx.lineTo(corner[0], corner[1])
+            }
+            ctx.stroke()
+          }
+        }
+      }
+    })
+  }, [cvImage])
   return (
-    <>
-      <canvas width={640} height={480} ref={ref} />
-      <Fps ref={fpsFef} />
-    </>
+    <div style={{position: 'relative'}}>
+      <canvas width={640} height={480} ref={refImage} style={styleTopLeft} />
+      <canvas width={640} height={480} ref={refApril} style={styleTopLeft} />
+      <Fps ref={fpsFef} style={styleTopLeft} />
+    </div>
   )
 }

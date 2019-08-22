@@ -18,12 +18,6 @@ visonReq.setsockopt(zmq.ZMQ_SNDHWM, 1)
 visonReq.setsockopt(zmq.ZMQ_RECONNECT_IVL_MAX, 1)
 visonReq.connect('tcp://localhost:5600')
 
-let replyNbr = 0
-visonReq.on('message', (msg: any) => {
-  console.log('got reply', replyNbr, msg.toString())
-  replyNbr += 1
-})
-
 ipcMain.on('asynchronous-message', (_, arg: any) => {
   console.log('main sending', arg)
   if (arg.domain && arg.command) {
@@ -50,6 +44,13 @@ export const startProxy = (contents: Electron.WebContents) => {
   cameraSub.on('message', (message) => {
     contents.send('zmq-camera', message)
     visonReq.send(message)
+  })
+
+  visonReq.on('message', (data: any) => {
+    contents.send('zmq', {
+      type: 'apriltags',
+      data: JSON.parse(data),
+    })
   })
 
   sockSub.on('message', message => {
