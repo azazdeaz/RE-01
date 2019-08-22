@@ -59,8 +59,8 @@ export const Monitor: FC = () => {
 
   useEffect(() => {
     ipcRenderer.on('zmq', (_: any, event: any) => {
-      if (event.type === 'apriltags' && cvImage) {
-        const ctx = cvImage.getContext('2d')
+      if (event.type === 'apriltags' && cvApril) {
+        const ctx = cvApril.getContext('2d')
         if (ctx) {
           for (const detection of event.data)  {
             console.log(_, event)
@@ -75,7 +75,7 @@ export const Monitor: FC = () => {
         }
       }
     })
-  }, [cvImage])
+  }, [cvApril])
   return (
     <div style={{position: 'relative'}}>
       <canvas width={640} height={480} ref={refImage} style={styleTopLeft} />

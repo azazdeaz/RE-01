@@ -2,9 +2,7 @@ import React from 'react'
 import { TestChart } from './TestChart'
 import { Teleop } from './Teleop'
 import { Monitor } from './Monitor'
-
-import { Button, Intent, Spinner } from "@blueprintjs/core";
-
+import { Simulation } from './Simulation'
 
 const App: React.FC = () => {
   return (
@@ -12,10 +10,11 @@ const App: React.FC = () => {
       <header className="App-header">
         {/*<TestChart />*/}
         <Teleop />
-        <Monitor />
+        {/*<Monitor />*/}
+        <Simulation width={500} height={350}/>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
