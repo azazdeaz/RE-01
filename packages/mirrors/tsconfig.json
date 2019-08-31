@@ -3,7 +3,10 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
-    "lib": ["es6", "dom"]
+    "lib": [
+      "dom",
+      "es2019"
+    ]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/__tests__/*.ts"]

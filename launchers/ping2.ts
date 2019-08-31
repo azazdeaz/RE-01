@@ -2,7 +2,7 @@
 
 import zmq from 'zeromq'
 const sockSub = zmq.socket('sub')
-sockSub.connect('tcp://192.168.0.100:5560')
+sockSub.connect('tcp://192.168.50.111:5560')
 sockSub.subscribe('')
 import fs from 'fs'
 

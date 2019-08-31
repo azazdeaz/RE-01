@@ -32,6 +32,7 @@
     "nodemon": "^1.19.1"
   },
   "dependencies": {
+    "@msgpack/msgpack": "^1.9.0",
     "zeromq": "^5.1.0"
   }
 }

@@ -1,24 +1,21 @@
+import { decode } from '@msgpack/msgpack'
 import Electron, { ipcMain } from 'electron'
 import zmq from 'zeromq'
 
 const sockSub = zmq.socket('sub')
-sockSub.connect('tcp://192.168.0.100:5557')
+sockSub.connect('tcp://192.168.50.111:5557')
 sockSub.subscribe('')
 
 const sockReq = zmq.socket('req')
-sockReq.connect('tcp://192.168.0.100:5556')
+sockReq.connect('tcp://192.168.50.111:5556')
 
 const cameraSub = zmq.socket('sub')
-cameraSub.connect('tcp://192.168.0.100:5560')
+cameraSub.connect('ipc:///home/azazdeaz/mirrors')
 // cameraSub.setsockopt(zmq.ZMQ_CONFLATE, 1)
 cameraSub.subscribe('')
 
-const visonReq = zmq.socket('req')
-visonReq.setsockopt(zmq.ZMQ_SNDHWM, 1)
-visonReq.setsockopt(zmq.ZMQ_RECONNECT_IVL_MAX, 1)
-visonReq.connect('tcp://localhost:5600')
 
-ipcMain.on('asynchronous-message', (_, arg: any) => {
+ipcMain.on('asynchronous-message', (_: any, arg: any) => {
   console.log('main sending', arg)
   if (arg.domain && arg.command) {
     sockReq.send(JSON.stringify(arg))
@@ -41,15 +38,17 @@ export const startProxy = (contents: Electron.WebContents) => {
   //   // console.log(message)
   //   contents.send('zmq', message)
   // }, 100)
-  cameraSub.on('message', (message) => {
-    contents.send('zmq-camera', message)
-    visonReq.send(message)
-  })
 
-  visonReq.on('message', (data: any) => {
+  cameraSub.on('message', async (message: Uint8Array) => {
+    const {
+      image,
+      tags
+    } = decode(message) as any
+    // console.log(image, tags)
+    contents.send('zmq-camera', image)
     contents.send('zmq', {
       type: 'apriltags',
-      data: JSON.parse(data),
+      data: tags,
     })
   })
 

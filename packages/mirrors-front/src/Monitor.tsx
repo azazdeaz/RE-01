@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useRef, useState} from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { Fps } from './Fps'
 // @ts-ignore
 const { ipcRenderer } = window.require('electron')
@@ -11,7 +11,7 @@ function binaryToDataURL(inputArray: Uint8Array) {
 const styleTopLeft = {
   position: 'absolute' as 'absolute',
   top: 0,
-  left: 0
+  left: 0,
 }
 
 function writeToContextWithURL(
@@ -62,9 +62,10 @@ export const Monitor: FC = () => {
       if (event.type === 'apriltags' && cvApril) {
         const ctx = cvApril.getContext('2d')
         if (ctx) {
-          for (const detection of event.data)  {
+          ctx.clearRect(0, 0, 640, 480)
+          for (const detection of event.data) {
             console.log(_, event)
-            ctx.beginPath();
+            ctx.beginPath()
             ctx.strokeStyle = '#00ff11'
             ctx.moveTo(detection.corners[3][0], detection.corners[3][1])
             for (const corner of detection.corners) {
@@ -77,7 +78,7 @@ export const Monitor: FC = () => {
     })
   }, [cvApril])
   return (
-    <div style={{position: 'relative'}}>
+    <div style={{ position: 'relative', width: 640, height: 480 }}>
       <canvas width={640} height={480} ref={refImage} style={styleTopLeft} />
       <canvas width={640} height={480} ref={refApril} style={styleTopLeft} />
       <Fps ref={fpsFef} style={styleTopLeft} />

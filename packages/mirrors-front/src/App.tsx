@@ -4,15 +4,20 @@ import { Teleop } from './Teleop'
 import { Monitor } from './Monitor'
 import { Simulation } from './Simulation'
 
+const containerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: '100%',
+}
+
 const App: React.FC = () => {
   return (
-    <div className="App bp3-dark">
-      <header className="App-header">
-        {/*<TestChart />*/}
-        <Teleop />
-        {/*<Monitor />*/}
-        <Simulation width={500} height={350}/>
-      </header>
+    <div style={containerStyle}>
+      {/*<TestChart />*/}
+      {/*<Teleop />*/}
+      <Monitor />
+      <Simulation width={500} height={350} />
     </div>
   )
 }

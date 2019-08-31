@@ -16,7 +16,7 @@ function createWindow() {
     width: 800,
   })
   win.maximize()
-
+console.log('hey')
   startProxy(win.webContents)
 
   // and load the index.html of the app.
