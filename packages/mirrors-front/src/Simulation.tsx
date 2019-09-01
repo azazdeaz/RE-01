@@ -176,31 +176,6 @@ const testDetections: Detection[] = [
   },
 ]
 
-// const applyRotationMatrix(object: THREE.Object3D, rmat: [Vector3, Vector3, Vector3]) {
-//
-//
-//
-// // Calculates rotation matrix to euler angles
-// // The result is the same as MATLAB except the order
-// // of the euler angles ( x and z are swapped ).
-//
-//
-//   const sy = math.sqrt(rmat[0,0] * rmat[0,0] +  rmat[1,0] * rmat[1,0])
-//
-//   const singular = sy < 1e-6
-//   let x, y, z
-//   if  not singular :
-//     x = math.atan2(rmat[2,1] , rmat[2,2])
-//   y = math.atan2(-rmat[2,0], sy)
-//   z = math.atan2(rmat[1,0], rmat[0,0])
-// else :
-//   x = math.atan2(-rmat[1,2], rmat[1,1])
-//   y = math.atan2(-rmat[2,0], sy)
-//   z = 0
-//
-//
-// }
-
 interface ICreateThreePartsOptions {
   canvas: HTMLCanvasElement
   width: number
@@ -236,7 +211,7 @@ const createThreeParts = ({
     renderer,
     canvas,
     controls,
-    planes: [] as THREE.Mesh[],
+    planes: new Map<number, THREE.Mesh>(),
     clock,
   }
 }
@@ -248,7 +223,6 @@ const createPlane = ({ color }: { color: string }) => {
     side: THREE.DoubleSide,
   })
   const plane = new THREE.Mesh(geometry, material)
-  // plane.matrixAutoUpdate = false
   return plane
 }
 
@@ -258,19 +232,16 @@ const updatePlanes = (
 ) => {
   const { scene, camera, renderer, planes } = threeParts
 
-  const colors = randomColor({
-    luminosity: 'light',
-    count: detections.length,
-    seed: 1,
-  })
   for (const [i, detection] of detections.entries()) {
-    if (!planes[i]) {
-      planes.push(createPlane({ color: colors[i] }))
-      scene.add(planes[i])
+    if (!planes.has(detection.tag_id)) {
+      const plane = createPlane({
+        color: randomColor({ luminosity: 'light', seed: detection.tag_id }),
+      })
+      planes.set(detection.tag_id, plane)
     }
+    const plane = planes.get(detection.tag_id)!
     const [x, y, z] = detection.pose_t.map(([v]) => v * 1)
-    planes[i].position.set(x, y, z)
-    // planes[i].rotation.set(Math.random(), Math.random(), Math.random())
+    plane.position.set(x, y, z)
     const r = detection.pose_R
     const tmat = new THREE.Matrix4()
     tmat.set(
@@ -291,37 +262,15 @@ const updatePlanes = (
       0,
       1
     )
-    // tmat.set(
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   Math.random(),
-    //   0,
-    //   0,
-    //   0,
-    //   1
-    // )
-    // planes[i].matrix.set( -0.2967712, -0.6621376,  0.6881139,0,
-    // 0.7396647, -0.6151495, -0.2729234,0,
-    // 0.6040058,  0.4279777,  0.6723185,0,
-    // 0,0,0,1)
-    planes[i].rotation.setFromRotationMatrix(tmat)
-    // planes[i].matrix.makeRotationX(Math.random())
-    // planes[i].rotation.x = Math.random()
-    // planes[i].matrixWorldNeedsUpdate = true
-    // planes[i].updateMatrix()
-    console.log('i', i)
-    scene.add(planes[i])
-    // console.log()
+    plane.rotation.setFromRotationMatrix(tmat)
+    plane.rotation.x += Math.PI / 2
+    scene.add(plane)
   }
+  planes.forEach((plane, index) => {
+    if (!detections.some(d => d.tag_id === index)) {
+      scene.remove(plane)
+    }
+  })
   renderer.render(scene, camera)
 }
 
@@ -344,10 +293,6 @@ export const Simulation: FC<IProps> = props => {
   useEffect(() => {
     if (threeParts) {
       const { controls, clock, renderer, scene, camera } = threeParts
-      // const geometry = new THREE.BoxGeometry(1, 1, 1)
-      // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-      // const cube = new THREE.Mesh(geometry, material)
-      // scene.add(cube)
 
       const animate = () => {
         const delta = clock.getDelta()
