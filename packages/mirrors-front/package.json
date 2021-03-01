@@ -27,7 +27,7 @@
     "react-scripts": "3.0.1",
     "rxjs": "^6.5.2",
     "rxjs-hooks": "^0.5.1",
-    "three": "^0.107.0",
+    "three": "^0.125.0",
     "typescript": "3.5.3"
   },
   "scripts": {
